@@ -1,5 +1,6 @@
 import React from 'react';
 import TodoTable from './TodoTable';
+import TodoInput from './TodoInput';
 
 const styles = require('./style.scss');
 
@@ -43,14 +44,23 @@ export default class TodoList extends React.Component {
   }
 
   render() {
-    let {tasks} = this.state;
+    let {tasks, newTaskText} = this.state;
 
     let numTasks = tasks.length;
     let completedTasks = tasks.filter(task => task.done).length;
 
     return (
       <div className={styles.wrapper}>
-        <TodoTable tasks={tasks} />
+        <TodoTable
+          tasks={tasks}
+          toggleTask={this.toggleTask}
+          removeTask={this.removeTask}
+        />
+        <TodoInput
+          addTask={this.addTask}
+          newTaskText={newTaskText || ''}
+          updateText={this.updateText}
+        />
         <div className={styles.announcer}>I have completed {completedTasks} out of {numTasks} tasks. {
           completedTasks >= numTasks && 'Yay!'
         }</div>
@@ -58,20 +68,48 @@ export default class TodoList extends React.Component {
     );
   }
 
-  updateText() {
+  updateText(el) {
+    let {
+      target: {value: newTaskText}
+    } = el;
 
+    this.setState({
+      newTaskText
+    });
   }
 
-  addTask() {
-    // add a task to the tasks array and call setState
+  addTask(name) {
+    let {tasks, nextId} = this.state;
+
+    let id = ++nextId;
+    tasks.push({
+      name, id, done: false
+    });
+
+    this.setState({
+      tasks, nextId
+    });
   }
 
-  toggleTask() {
-    // toggle the 'done' property on an existing task and call setState
+  toggleTask(id) {
+    let {tasks} = this.state;
+
+    let thisTask = tasks.find(task => task.id === id);
+    thisTask.done = !thisTask.done;
+
+    this.setState({
+      tasks
+    });
   }
 
-  removeTask() {
-    // remove a task from the array and call setState
+  removeTask(id) {
+    let {tasks} = this.state;
+
+    tasks = tasks.filter(task => task.id !== id);
+
+    this.setState({
+      tasks
+    });
   }
 
 }

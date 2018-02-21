@@ -9,7 +9,7 @@ export default class TodoTable extends React.Component {
   }
 
   render() {
-    let {tasks = []} = this.props;
+    let {tasks = [], toggleTask, removeTask} = this.props;
     return (
       <table className={styles.todoTable}>
         <thead>
@@ -23,8 +23,8 @@ export default class TodoTable extends React.Component {
               let {id, name, done} = task;
               return <tr key={id}>
                 <td>{name}</td>
-                <td><input type="checkbox" checked={done} /></td>
-                <td><i className="fa fa-times-circle" /></td>
+                <td><input type="checkbox" checked={done} onChange={() => toggleTask(id)} /></td>
+                <td><i className="fa fa-times-circle" onClick={() => removeTask(id)} /></td>
               </tr>})
           }
         </tbody>
